@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Control de Luces</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .color-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Panel de Control de Luces</h1>
+    
+    <div class="color-buttons">
+        <button style="background:yellow" onclick="changeColor('yellow')">Amarillo</button>
+        <button style="background:blue" onclick="changeColor('blue')">Azul</button>
+        <button style="background:red" onclick="changeColor('red')">Rojo</button>
+        <button style="background:green" onclick="changeColor('green')">Verde</button>
+        <button style="background:white" onclick="changeColor('white')">Blanco</button>
+    </div>
+
+    <div>
+        <button onclick="strobeEffect()">Efecto Estroboscópico</button>
+        <button onclick="rainbowEffect()">Efecto Arcoíris</button>
+    </div>
+
+    <div>
+        <h3>Código QR para Público:</h3>
+        <img id="qrCode" src="" alt="QR Code">
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script>
+        const socket = io('https://socket.io-server.herokuapp.com');
+        const qrCodeImg = document.getElementById('qrCode');
+
+        // Generar QR con URL del público
+        const publicURL = 'https://tudominio.com/publico.html';
+        QRCode.toDataURL(publicURL, (err, url) => {
+            qrCodeImg.src = url;
+        });
+
+        function changeColor(color) {
+            socket.emit('lightControl', { 
+                type: 'color', 
+                value: color 
+            });
+        }
+
+        function strobeEffect() {
+            socket.emit('lightControl', { 
+                type: 'effect', 
+                value: 'strobe' 
+            });
+        }
+
+        function rainbowEffect() {
+            socket.emit('lightControl', { 
+                type: 'effect', 
+                value: 'rainbow' 
+            });
+        }
+    </script>
+</body>
+</html>
